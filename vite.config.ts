@@ -1,13 +1,13 @@
-import react from "@vitejs/plugin-react-swc";
+import preact from "@preact/preset-vite";
 import fs from "fs";
 import path from "path";
 import { UserConfigExport, defineConfig, loadEnv } from "vite";
 
-const currentEnv = loadEnv(process.env.NODE_ENV, process.cwd());
+const currentEnv = loadEnv(process.env.NODE_ENV || "", process.cwd());
 
 export default defineConfig(({ command }) => {
   const config: UserConfigExport = {
-    plugins: [react()],
+    plugins: [preact()],
   };
 
   if (command === "serve") {

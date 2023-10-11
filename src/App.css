@@ -1,6 +1,10 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.app-root {
+  padding-bottom: 1rem;
+}
+
+.custom-layout .react-colorful {
+  background: #33333a;
+  border-radius: 16px;
+  box-shadow: 3px 3px 16px rgba(0, 0, 0, 0.15);
+  padding: 12px;
 }
