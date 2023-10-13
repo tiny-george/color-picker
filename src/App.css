@@ -1,10 +1,67 @@
-.app-root {
-  padding-bottom: 1rem;
+.color-picker__root {
+  position: relative;
 }
 
-.custom-layout .react-colorful {
+.color-picker__trigger {
+  align-items: center;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.87);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 500;
+  gap: 0.5rem;
+  padding: 0.6em 0.6em;
+  transition: border-color 0.25s;
+}
+
+.color-picker__trigger:hover {
+  border-color: #646cff;
+}
+
+.color-picker__trigger:focus,
+.color-picker__trigger:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.color-picker__trigger::before {
+  background-color: var(--color);
+  border: 3px solid white;
+  content: "";
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.color-picker__pane {
   background: #33333a;
   border-radius: 16px;
   box-shadow: 3px 3px 16px rgba(0, 0, 0, 0.15);
-  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 16px;
+  position: relative;
+  top: 2px;
+  width: 232px;
+}
+
+.color-picker__pane input {
+  padding: 0.6em;
+  width: 100%;
+}
+
+.color-picker__pane__actions {
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.87);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  text-align: right;
 }
