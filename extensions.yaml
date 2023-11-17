@@ -1,0 +1,11 @@
+build:
+  type: static-web-component
+  properties:
+    npm-build-command: npnp run deploy
+    static-files-folder: dist
+    name: colorPicker
+deploy:
+  type: domain-for-static-resources
+  properties:
+    accessibility: public
+
