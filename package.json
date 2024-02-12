@@ -1,5 +1,5 @@
 {
-  "name": "@magnolia-private/warp-extensions-color-picker",
+  "name": "@magnolia-private/color-picker",
   "private": true,
   "version": "0.0.0",
   "type": "module",
