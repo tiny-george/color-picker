@@ -1,33 +1,50 @@
 import type { FunctionComponent } from "preact";
-import { useCallback, useEffect, useRef, useState } from "preact/hooks";
+import { useCallback, useEffect, useRef, useState} from "preact/hooks";
 import { HexColorInput, HexColorPicker } from "react-colorful";
 
 import "./App.css";
 
-const ACTION_INIT = "warp.extensions.init";
+const ACTION_INIT = "init";
 const ACTION_REQUEST_HEIGHT = "warp.extensions.request_height";
-const ACTION_SET_VALUE = "warp.extensions.set_value";
+const ACTION_SET_VALUE = "changeValue";
+
+const sendComponentChange = (id: number, newValue: any) => {
+  window.parent.postMessage({
+    correlationId: id,
+    action: ACTION_SET_VALUE,
+    value: newValue
+  }, "*");
+}
 
 const dispatchEventUpsteam = (action: {
   payload: Record<string, unknown>;
+  id: number;
   type: string;
 }) => {
   if (window.parent === window) {
     return;
   }
 
-  window.parent.postMessage(action, "*");
+  if (action.type === ACTION_SET_VALUE) {
+    sendComponentChange(action.id, action.payload.value);
+  }
+  //window.parent.postMessage(action, "*");
 };
 
 const App: FunctionComponent = () => {
   const thisRef = useRef<HTMLDivElement>(null);
-  const [isInitialized, setIsInitizalized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [color, setColor] = useState<string>();
+  const [correlationId, setCorrelationId] = useState<number>();
 
   const handleMessageEvent = useCallback((e: MessageEvent) => {
-    if (e.data.type === ACTION_SET_VALUE) {
-      setColor(e.data.payload.value);
+    if (e.data.action === ACTION_INIT) {
+      const id = e.data.correlationId;
+      if (id !== correlationId) {
+        setCorrelationId(e.data.correlationId);
+        setColor(e.data.state.value || e.data.state.defaultValue);
+      }
     }
   }, []);
 
@@ -50,10 +67,11 @@ const App: FunctionComponent = () => {
 
     dispatchEventUpsteam({
       payload: { idleHeight: thisRef.current.offsetHeight },
+      id: correlationId || 0,
       type: ACTION_INIT,
     });
 
-    setIsInitizalized(true);
+    setIsInitialized(true);
   }, [thisRef.current]);
 
   useEffect(() => {
@@ -63,6 +81,7 @@ const App: FunctionComponent = () => {
 
     dispatchEventUpsteam({
       payload: { value: thisRef.current.offsetHeight },
+      id: correlationId || 0,
       type: ACTION_REQUEST_HEIGHT,
     });
   }, [isOpen, thisRef.current]);
@@ -70,6 +89,7 @@ const App: FunctionComponent = () => {
   useEffect(() => {
     dispatchEventUpsteam({
       payload: { value: color },
+      id: correlationId || 0,
       type: ACTION_SET_VALUE,
     });
   }, [color]);
