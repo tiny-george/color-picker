@@ -5,13 +5,21 @@ import { HexColorInput, HexColorPicker } from "react-colorful";
 import "./App.css";
 
 const ACTION_INIT = "init";
-const ACTION_REQUEST_HEIGHT = "warp.extensions.request_height";
+const ACTION_REQUEST_HEIGHT = "changeHeight";
 const ACTION_SET_VALUE = "changeValue";
 
 const sendComponentChange = (id: number, newValue: any) => {
   window.parent.postMessage({
     correlationId: id,
     action: ACTION_SET_VALUE,
+    value: newValue
+  }, "*");
+}
+
+const sendChangeHeight = (id: number, newValue: any) => {
+  window.parent.postMessage({
+    correlationId: id,
+    action: ACTION_REQUEST_HEIGHT,
     value: newValue
   }, "*");
 }
@@ -28,6 +36,10 @@ const dispatchEventUpsteam = (action: {
   if (action.type === ACTION_SET_VALUE) {
     sendComponentChange(action.id, action.payload.value);
   }
+  if (action.type === ACTION_REQUEST_HEIGHT) {
+    console.log("Set height: " + action.payload.value);
+    sendChangeHeight(action.id, action.payload.value);
+  }
   //window.parent.postMessage(action, "*");
 };
 
@@ -39,12 +51,24 @@ const App: FunctionComponent = () => {
   const [correlationId, setCorrelationId] = useState<number>();
 
   const handleMessageEvent = useCallback((e: MessageEvent) => {
+    //console.log("In color-picker...");
+    //console.log(e.data);
     if (e.data.action === ACTION_INIT) {
       const id = e.data.correlationId;
       if (id !== correlationId) {
         setCorrelationId(e.data.correlationId);
         setColor(e.data.state.value || e.data.state.defaultValue);
       }
+    }
+    if (e.data.action === 'error') {
+      //TODO on error
+      console.error(e.data);
+    }
+    if (e.data.action === 'change') {
+      setColor(e.data.state.value || e.data.state.defaultValue);
+    }
+    if (e.data.action === 'restResponse') {
+      //TODO ignore
     }
   }, []);
 
